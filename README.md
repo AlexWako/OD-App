@@ -7,7 +7,6 @@ These are the instructions for accessing the application.
 ```pip install requests```\
 ```pip install PySimpleGUI```\
 ```pip install jinja2```
-If an error occurs during the installation 
 4. Once everything is installed, download everything in the github rep aside from the README.md file.
 5. Run ```python3 GUI.py``` on the terminal and everything should work. If it does not work, it is likely that you need to provide the file path to GUI.py, so replace GUI.py with the file path.
 
