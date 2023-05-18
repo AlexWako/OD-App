@@ -11,5 +11,5 @@ These are the instructions for accessing the application.
 
 Fulfillment Orders Rules
 1. Add a p to any order number that is a partial order (for now, these orders have to be done manually).
-2. Add a e to any order number that is an exchange.
+2. Add an e to any order number that is an exchange.
 3. Add a + for packages that have two or more orders being fulfilled.
