@@ -1,6 +1,6 @@
 These are the instructions for accessing the application.
 1. If you have not already installed python, please do. I used version 3.10.11 for the code, so make sure to install the same version. Here is the link to the installation: https://www.python.org/downloads/release/python-31011/
-2. Download pip to install other libaries using ```python -m ensurepip --upgrade```
+2. Download pip to install other libaries using ```python3 -m ensurepip --upgrade```
 3. There are several python libraries I used to develop the app. Please install the following using the code provided on your terminal:  
 ```pip install ShopifyAPI```\
 ```pip install pandas```\
