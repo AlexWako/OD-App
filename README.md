@@ -1,7 +1,7 @@
 These are the instructions for accessing the application.
 1. If you have not already installed python, please do. I used version 3.10.11 for the code, so make sure to install the same version.
 2. There are several python libraries I used to develop the app. Please install the following using the code provided on your terminal:  
-```pip install --upgrade ShopifyAPI```\
+```pip install ShopifyAPI```\
 ```pip install pandas```\
 ```pip install requests```\
 ```pip install PySimpleGUI```\
