@@ -12,6 +12,6 @@ If an error occurs during the installation
 5. Run ```python GUI.py``` on the terminal and everything should work. If it does not work, it is likely that you need to provide the file path to GUI.py, so replace GUI.py with the file path.
 
 Fulfillment Orders Rules
-1. Add a p to any order number that is a partial order (for now, these orders have to be done manually).
-2. Add an e to any order number that is an exchange.
-3. Add a + for packages that have two or more orders being fulfilled.
+1. Add a p next to any order number that is a partial order (for now, these orders have to be done manually).
+2. Add an e next to any order number that is an exchange.
+3. Add a + between the order numbers for packages that have two or more orders being fulfilled.
