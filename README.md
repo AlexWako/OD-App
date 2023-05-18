@@ -6,5 +6,5 @@ These are the instructions for accessing the application.
 ```pip install requests```\
 ```pip install PySimpleGUI```\
 ```pip install jinja2```
-3. Once everything is installed, downloading everything in the github rep aside from the README.md file.
+3. Once everything is installed, download everything in the github rep aside from the README.md file.
 4. Run ```python GUI.py``` on the terminal and everything should work
