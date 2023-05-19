@@ -4,9 +4,9 @@ from APIScript import *
 def fulfill(path):
 
     # API information for the store
-    api_key = "d01c57ce8d6a90dcac5aaaaa8d60cf46"
-    api_secret_key = "6bfa86392f9df3bd00a8a37e1675aa99"
-    private_app_password = "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"
+    api_key = "6ad8ee0c3b4547e27a98d410ea0ad7f8"
+    api_secret_key = "c893ad7996cf83741e922034cbf8e3c7"
+    private_app_password = ""
     api_version = "2023-04"
     shop_url = f"{api_key}:{private_app_password}@okayamadenim.myshopify.com"
 
