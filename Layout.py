@@ -1,5 +1,15 @@
 import PySimpleGUI as psg
 
+# Login Screen
+def get_login_layout():
+
+    layout = [
+        [psg.Text("API Token:"), psg.InputText()],
+        [psg.Button("Submit")]
+    ]
+
+    return layout
+
 # Start Screen
 def get_start_layout():
 
@@ -35,7 +45,7 @@ def get_fulfill_layout():
 def get_fulfill_output_layout(output):
     layout = [
                 [psg.Text(output)],
-                [psg.Button("Go Back", pad = ((0, 200), 0)), psg.Button("Exit")]
+                [psg.Button("Home", pad = ((0, 200), 0)), psg.Button("Exit")]
     ]
     return layout
 
@@ -67,7 +77,7 @@ def get_input_table_layout(data):
 def get_measurement_output_layout():
     layout = [
         [psg.Text("Complete", justification = 'center')],
-        [psg.Button("Exit")]
+        [psg.Button("Home", pad = ((0, 200), 0)), psg.Button("Exit")]
     ]
     return layout
 

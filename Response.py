@@ -9,7 +9,7 @@ def exchange(email, body):
     server = "smtp.office365.com"
     port = 587
     send_email = "info@okayamadenim.com"
-    send_password = ""
+    send_password = "Denimhead123!"
     rec_email = email
     subject = "Message from Okayama Denim"
     body = MIMEText(body, 'html')

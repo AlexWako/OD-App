@@ -2,6 +2,7 @@ def remove_space(string):
     string = string.replace(' ','')
     return string
 
+# Not used
 def list_to_html(data):
     html_code = "<table width='100%'>\n"
     for row in data:

@@ -1,7 +1,25 @@
 from ShopifyApp import *
-from APIScript import *
+from FulfillScript import *
+from EditMeasureScript import *
 from Layout import *
 import tkinter as tk
+
+headers = None
+
+def login_screen(headers):
+    window = psg.Window('Login', get_login_layout())
+    while True:
+        event, values = window.read()
+        if event == psg.WINDOW_CLOSED:
+            break
+        if event == 'Submit':
+            headers = activate_session(values[0])
+            if headers == None:
+                continue
+            else:
+                break
+    window.close()
+    return headers
 
 def fulfill_order(window):
     while True:
@@ -9,6 +27,7 @@ def fulfill_order(window):
         if event == psg.WINDOW_CLOSED:
             return "Exit"
         if event == "Go Back":
+            window.close()
             return "Go Back"
         if event == "Submit":
             file_path = values["-FILE-"]
@@ -67,39 +86,41 @@ def edit_measure(window):
                             window.close()
                             return "Go Back"
 
-activate_session()
+headers = login_screen(headers)
 
-window = psg.Window('OD App', get_start_layout())
+if headers != None:
 
-while True:
+    window = psg.Window('OD App', get_start_layout())
 
-    event, values = window.read()
+    while True:
 
-    if event == psg.WINDOW_CLOSED or event == "Exit":
-        break
+        event, values = window.read()
 
-    if event == "Fulfill Order":
-        window.close()
-        window = psg.Window("Fulfill Orders", get_fulfill_layout())
-        status = fulfill_order(window)
-        if status == "Go Back":
-            window = psg.Window('OD App', get_start_layout())
-            continue
-        if status == "Exit":
+        if event == psg.WINDOW_CLOSED or event == "Exit":
             break
 
-    # Edit Measurement Window
-    if event == "Edit Measurement":
-        window.close()
-        window = psg.Window('Input Window', get_edit_measurement_layout())
-        status = edit_measure(window)
-        if status == "Go Back":
-            window = psg.Window('OD App', get_start_layout())
-            continue
-        if status == "Exit":
-            break
+        if event == "Fulfill Order":
+            window.close()
+            window = psg.Window("Fulfill Orders", get_fulfill_layout())
+            status = fulfill_order(window)
+            if status == "Go Back":
+                window = psg.Window('OD App', get_start_layout())
+                continue
+            if status == "Exit":
+                break
 
-window.close()
+        # Edit Measurement Window
+        if event == "Edit Measurement":
+            window.close()
+            window = psg.Window('Input Window', get_edit_measurement_layout())
+            status = edit_measure(window)
+            if status == "Go Back":
+                window = psg.Window('OD App', get_start_layout())
+                continue
+            if status == "Exit":
+                break
 
-close_session()
+    window.close()
+
+    close_session()
 
