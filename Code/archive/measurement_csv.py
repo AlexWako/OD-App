@@ -6,7 +6,7 @@ from paginate import *
 from EditMeasureScript import *
 
 headers = {
-    'X-Shopify-Access-Token': "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",
+    'X-Shopify-Access-Token': # API Secret Key,
     'Content-Type': 'application/json',
 }
 
