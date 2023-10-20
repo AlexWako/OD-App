@@ -12,7 +12,7 @@ no_phone = set({})
 while True:
 
     headers = {
-        'X-Shopify-Access-Token': "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",
+        'X-Shopify-Access-Token': # api_secret_key,
         'Content-Type': 'application/json',
     }
 
