@@ -210,5 +210,3 @@ if check_resource_path() == "Complete":
         window.close()
 
 close_session()
-
-# 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
