@@ -1,3 +1,9 @@
+This is all the code used to develop the Okayama Denim in-house application. 
+Some files are not necessary for the application's functionality, so they are split into different folders.
+- main: All the scripts necessary for the application to function
+- template: The templates used for the application
+- archive: All the code used within application development and testing
+
 These are the instructions for accessing the application by code.
 1. If you have not already installed python, please do. I used version 3.10.11 for the code, so make sure to install the same version. Here is the link to the installation: https://www.python.org/downloads/release/python-31011/
 2. Download pip to install other libaries using ```python3 -m ensurepip --upgrade```
