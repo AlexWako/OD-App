@@ -1,7 +1,7 @@
 import shopify
 
 # API information for the store
-api_key = "d01c57ce8d6a90dcac5aaaaa8d60cf46"
+api_key = "6ad8ee0c3b4547e27a98d410ea0ad7f8"
 api_version = "2023-04"
 
 def activate_session(private_app_password):

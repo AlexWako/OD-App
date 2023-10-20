@@ -1,19 +1,36 @@
 import shopify
+import os
 import pandas as pd
 import requests
+from numbers_parser import Document
 from TextEdit import *
 from Response import *
 from PyToHTML import *
 
 # Creates a dictionary of the order information off the csv file
-def get_order(csv_file):
-
+def get_order_csv(csv_file):
     # Seperates the csv files into different parts of necessary data
     csv = pd.read_csv(csv_file)
     order = list(csv.iloc[:, 1])
     track = list(csv.iloc[:, 16])
     email = list(csv.iloc[:, 23])
     name = list(csv.iloc[:, 0])
+
+    return (order, track, email, name)
+
+# Same as above function but for numbers file
+def get_order_num(num_file):
+
+    doc = Document(num_file)
+    sheets = doc.sheets
+    tables = sheets[0].tables
+    data = tables[0].rows(values_only = True)
+    df = pd.DataFrame(data[1:], columns = data[0])
+
+    order = list(df.iloc[:, 1])
+    track = list(df.iloc[:, 16])
+    email = list(df.iloc[:, 23])
+    name = list(df.iloc[:, 0])
 
     return (order, track, email, name)
 
@@ -26,6 +43,10 @@ def create_fulfillment(order_num, track_num, remaining, headers):
     # Get the fulfillment data of the order
     fulfillment_order = shopify.FulfillmentOrders.find_first(order_id = order.id)
 
+    ids = []
+    for fulfillment in fulfillment_order:
+        ids.append(fulfillment.id)
+
     data = {
         'fulfillment': {
             'tracking_info': {
@@ -35,7 +56,7 @@ def create_fulfillment(order_num, track_num, remaining, headers):
             'notify_customer': True,
             'line_items_by_fulfillment_order': [
                 {
-                'fulfillment_order_id': fulfillment_order.id
+                'fulfillment_order_id': max(ids)
                 }
             ]
         }
@@ -54,10 +75,15 @@ def create_fulfillment(order_num, track_num, remaining, headers):
         remaining["Response Status"].append(response.status_code)
 
 # Update fulfillment order
-def update_fulfillment(csv_file, headers):
+def update_fulfillment(file, headers):
 
-    # Split the csv file into different columns
-    info = get_order(csv_file)
+    name, extension = os.path.splitext(file)
+
+    # Split the file into different columns
+    if extension == ".csv":
+        info = get_order_csv(file)
+    elif extension == ".numbers":
+        info = get_order_num(file)
 
     order_nums = info[0]
     track_nums = info[1]

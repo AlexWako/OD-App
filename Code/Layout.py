@@ -16,6 +16,7 @@ def get_start_layout():
     button_layout = [
         [psg.Button('Fulfill Order')],
         [psg.Button('Edit Measurement')],
+        [psg.Button('Competitor Changes')],
         [psg.Button('Exit')]
     ]
 
@@ -24,6 +25,8 @@ def get_start_layout():
     ]
 
     return layout
+
+#####################################
 
 # Layout when user presses send email
 def get_email_layout():
@@ -49,6 +52,8 @@ def get_fulfill_output_layout(output):
     ]
     return layout
 
+#####################################
+
 def get_edit_measurement_layout():
     layout = [
         [psg.Text('Enter product name:')],
@@ -58,20 +63,34 @@ def get_edit_measurement_layout():
     return layout
 
 def get_input_table_layout(data):
-    rows = len(data[1])
-    input_layout = [[psg.Multiline(size=(25, 10), key='-DATA-')]]
-    og_data_layout = [
-        [psg.Table(values = data[1], headings = data[0], num_rows = rows, key = '-OUTPUT TABLE-')]
-    ]
-    button_layout = [
-        [psg.Button("Submit")],
-        [psg.Button("Go Back")]
-    ]
-    layout = [
-        [psg.Frame('Original Table', og_data_layout), psg.VSeperator(), psg.Column(input_layout), psg.Column(button_layout)]
-    ]
+    if len(data[0]) == 2:
+        rows = len(data[1][0])
+        input_layout = [[psg.Multiline(size=(25, 10), key='-DATA-')]]
+        og_data_layout = [
+            [psg.Table(values = data[1][0], headings = data[0][0], num_rows = rows, key = '-OUTPUT TABLE RAW-')],
+            [psg.Table(values = data[1][1], headings = data[0][1], num_rows = rows, key = '-OUTPUT TABLE OW-')]
+        ]
+        button_layout = [
+            [psg.Button("Submit")],
+            [psg.Button("Go Back")]
+        ]
+        return [
+            [psg.Frame('Original Table', og_data_layout), psg.VSeperator(), psg.Column(input_layout), psg.Column(button_layout)]
+        ]
 
-    return layout
+    else:
+        rows = len(data[1])
+        input_layout = [[psg.Multiline(size=(25, 10), key='-DATA-')]]
+        og_data_layout = [
+            [psg.Table(values = data[1], headings = data[0], num_rows = rows, key = '-OUTPUT TABLE-')]
+        ]
+        button_layout = [
+            [psg.Button("Submit")],
+            [psg.Button("Go Back")]
+        ]
+        return [
+            [psg.Frame('Original Table', og_data_layout), psg.VSeperator(), psg.Column(input_layout), psg.Column(button_layout)]
+        ]
 
 
 def get_measurement_output_layout():
@@ -81,4 +100,53 @@ def get_measurement_output_layout():
     ]
     return layout
 
+#####################################
 
+def get_brand_input_layout():
+    layout = [
+        [psg.Text('Enter brand name:')],
+        [psg.Input(key='-INPUT-')],
+        [psg.Button("Go Back", pad = ((0, 235), 0)), psg.Button('Submit')]
+    ]
+    return layout
+
+def get_diagnostic_table_layout(data):
+    table_layout = [
+        [psg.Table(values = data["Changes"], headings = ['name', 'price change'])],
+        [psg.Table(values = data["New products"], headings = ['name', 'price'])]
+    ]
+    change_layout = [
+        [psg.Column([table_layout[0]])]
+    ]
+    new_layout = [
+        [psg.Column([table_layout[1]])]
+    ]
+    button_layout = [
+        [psg.Button("Finish")],
+        [psg.Button("Go Back")]
+    ]
+    layout = [
+        [psg.Frame('Price Changes', change_layout), psg.VSeparator(), psg.Frame('New Products', new_layout), psg.Column(button_layout)]
+    ]
+    return layout
+
+def get_diagnostic_output_layout():
+    layout = [
+        [psg.Text("Data has been updated", justification = 'center')],
+        [psg.Button("Home", pad = ((0, 200), 0)), psg.Button("Exit")]
+    ]
+    return layout
+
+def get_diagnostic_no_output_layout():
+    layout = [
+        [psg.Text("No Changes", justification = "center")],
+        [psg.Button("Home", pad = ((0, 200), 0)), psg.Button("Exit")]
+    ]
+    return layout
+
+##########
+
+def error_layout():
+    layout = [
+        
+    ]

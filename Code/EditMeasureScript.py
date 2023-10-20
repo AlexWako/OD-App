@@ -1,15 +1,16 @@
 import requests
 import re
+import shopify
 from bs4 import BeautifulSoup
 
 #　Get product data from typed product name
 def get_product(product, headers):
 
-    product = product.replace('"', "'")
+    edit_product = product.replace('"', "'")
 
     query = '''
         query($productName: String!) {
-            products(query: $productName, first: 1) {
+            products(query: $productName, first: 10) {
                 edges {
                     node {
                         id
@@ -21,7 +22,7 @@ def get_product(product, headers):
     '''
 
     variables = {
-        'productName': product
+        'productName': edit_product
     }
 
     data = {
@@ -40,8 +41,16 @@ def get_product(product, headers):
     if response['data']['products']['edges'] == []:
         return False
 
+    index = 0
+
+    # Matches the product with ID number since request is inconsistent
+    for id in response['data']['products']['edges']:
+        if shopify.Product.find(re.search(r'\d+', str(id['node']['id'])).group()).title == product:
+            break
+        index += 1
+
     # Returns the product ID and the HTML body
-    return (re.search(r'\d+', response['data']['products']['edges'][0]['node']['id']).group(), response['data']['products']['edges'][0]['node']['descriptionHtml'])
+    return (re.search(r'\d+', response['data']['products']['edges'][index]['node']['id']).group(), response['data']['products']['edges'][index]['node']['descriptionHtml'])
 
 # Get the description of the body
 def get_table(html_body):
@@ -53,32 +62,76 @@ def get_table(html_body):
 # Get original sizing of the object
 def get_og_cm_data(html_body):
 
-    # Creates a new dictionary for the measurements and types of data being queried
-    measure_row = []
+    measurements = []
 
-    # Seperate the html table into a list of rows
-    cm_rows = get_table(html_body)[0].find_all('tr')
+    table = get_table(html_body)
+
+    if len(table) == 4:
+        
+        measure_row = [[], []]
+
+        cm_rows_raw = table[0].find_all('tr')
+        cm_rows_ow = table[2].find_all('tr')
+
+        for row in cm_rows_raw:
+
+            cells = row.find_all('td')
+
+            # Extract the content of each row
+            data = [cell.get_text(strip=True) for cell in cells]
+
+            # Add the data into the measure_row if
+            if cm_rows_raw.index(row) != 0:
+
+                measure_row[0].append(data)
+
+            else:
+
+                measurements.append(data)
+
+        for row in cm_rows_ow:
+
+            cells = row.find_all('td')
+
+            # Extract the content of each row
+            data = [cell.get_text(strip=True) for cell in cells]
+
+            # Add the data into the measure_row if
+            if cm_rows_ow.index(row) != 0:
+
+                measure_row[1].append(data)
+
+            else:
+
+                measurements.append(data)
+
+    else:
+
+        measure_row = []
+
+        cm_rows = table[0].find_all('tr')
+
+        for row in cm_rows:
+
+            cells = row.find_all('td')
+
+            # Extract the content of each row
+            data = [cell.get_text(strip=True) for cell in cells]
+
+            # Add the data into the measure_row if
+            if cm_rows.index(row) != 0:
+
+                measure_row.append(data)
+
+            else:
+
+                measurements = data
 
     # Iterates through the strings of html code in the table
-    for row in cm_rows:
-
-        cells = row.find_all('td')
-
-        # Extract the content of each row
-        data = [cell.get_text(strip=True) for cell in cells]
-
-        # Add the data into the measure_row if
-        if cm_rows.index(row) != 0:
-
-            measure_row.append(data)
-
-        else:
-
-            measurements = data
 
     return (measurements, measure_row)
 
-def edit_table(og_html, table_cm_data):
+def edit_table(og_html, table_data):
 
     soup = BeautifulSoup(og_html, 'html.parser')
 
@@ -86,24 +139,68 @@ def edit_table(og_html, table_cm_data):
 
     new_tables = tables
 
-    for table in new_tables:
-        rows = table.find_all('tr')
-        if "CM" in str(rows):
-            for i, row in enumerate(rows):
-                cells = row.find_all('td')
-                if i != 0:
-                    for j, cell in enumerate(cells):
-                        if j != 0:
-                            cell.clear()
-                            cell.append(str(table_cm_data[i - 1][j - 1]))
-        elif "Inches" in str(rows):
-            for i, row in enumerate(rows):
-                cells = row.find_all('td')
-                if i != 0:
-                    for j, cell in enumerate(cells):
-                        if j != 0:
-                            cell.clear()
-                            cell.append(str(round((float(table_cm_data[i - 1][j - 1])/2.54), 1)))
+    if len(new_tables) == 4:
+        
+        for table in new_tables:
+            rows = table.find_all('tr')
+            table_data_raw = table_data[:len(rows)]
+            table_data_ow = table_data[len(rows):]
+            if "CM" in str(rows):
+                if "Raw" in str(rows):
+                    for i, row in enumerate(rows):
+                        cells = row.find_all('td')
+                        if i != 0:
+                            for j, cell in enumerate(cells):
+                                if j != 0:
+                                    cell.clear()
+                                    cell.append(str(table_data_raw[i - 1][j - 1]))
+                elif "One Wash" in str(rows):
+                    for i, row in enumerate(rows):
+                        cells = row.find_all('td')
+                        if i != 0:
+                            for j, cell in enumerate(cells):
+                                if j != 0:
+                                    cell.clear()
+                                    print(len(cell), len(str(table_data_ow[i - 1][j - 1])))
+                                    cell.append(str(table_data_ow[i - 1][j - 1]))
+            elif "Inches" in str(rows):
+                if "Raw" in str(rows):
+                    for i, row in enumerate(rows):
+                        cells = row.find_all('td')
+                        if i != 0:
+                            for j, cell in enumerate(cells):
+                                if j != 0:
+                                    cell.clear()
+                                    cell.append(str(round((float(table_data_raw[i - 1][j - 1])/2.54), 1)))
+                elif "One Wash" in str(rows):
+                    for i, row in enumerate(rows):
+                        cells = row.find_all('td')
+                        if i != 0:
+                            for j, cell in enumerate(cells):
+                                if j != 0:
+                                    cell.clear()
+                                    cell.append(str(round((float(table_data_ow[i - 1][j - 1])/2.54), 1)))
+    
+    else:
+
+        for table in new_tables:
+            rows = table.find_all('tr')
+            if "CM" in str(rows):
+                for i, row in enumerate(rows):
+                        cells = row.find_all('td')
+                        if i != 0:
+                            for j, cell in enumerate(cells):
+                                if j != 0:
+                                    cell.clear()
+                                    cell.append(str(table_data[i - 1][j - 1]))
+            elif "Inches" in str(rows):
+                for i, row in enumerate(rows):
+                    cells = row.find_all('td')
+                    if i != 0:
+                        for j, cell in enumerate(cells):
+                            if j != 0:
+                                cell.clear()
+                                cell.append(str(round((float(table_data[i - 1][j - 1])/2.54), 1)))
 
     for table, new_table in zip(tables, new_tables):
 
